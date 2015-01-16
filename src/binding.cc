@@ -57,6 +57,8 @@ Handle<Value> load(const Arguments& args)
         return ThrowException(
             Exception::Error(String::New("FFailed to load library: pythoncom27.dll.")));
     }
+#elif __APPLE__
+    setenv("PYTHONHOME", *pythonHome, 1);
 #endif
 
     return Undefined();
