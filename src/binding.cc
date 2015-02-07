@@ -8,13 +8,14 @@
 using namespace v8;
 using namespace node;
 
-Handle<Value> load(const Arguments& args)
+void load(const FunctionCallbackInfo<Value>& args)
 {
-    HandleScope scope;
+    HandleScope scope(args.GetIsolate());
 
     if (args.Length() < 1 || !args[0]->IsString()) {
-        return ThrowException(
-            Exception::Error(String::New("Missing param: load(pythonHome).")));
+        args.GetReturnValue().Set(args.GetIsolate()->ThrowException(
+            Exception::Error(String::NewFromUtf8(args.GetIsolate(), "Missing param: load(pythonHome)."))));
+        return;
     }
 
     String::Utf8Value pythonHome(args[0]->ToString());
@@ -26,51 +27,56 @@ Handle<Value> load(const Arguments& args)
     sprintf(lpPathStringA, "%s", *pythonHome);
     MultiByteToWideChar(CP_UTF8, 0, lpPathStringA, -1, lpPathStringW, MAX_PATH);
     if (!SetEnvironmentVariable(L"PYTHONHOME", lpPathStringW)) {
-        return ThrowException(
-            Exception::Error(String::New("Failed to set environment variable: PYTHONHOME.")));
+        args.GetReturnValue().Set(args.GetIsolate()->ThrowException(
+            Exception::Error(String::NewFromUtf8(args.GetIsolate(), "Failed to set environment variable: PYTHONHOME."))));
+        return;
     }
 
     sprintf(lpPathStringA, "%s\\python27.dll", *pythonHome);
     MultiByteToWideChar(CP_UTF8, 0, lpPathStringA, -1, lpPathStringW, MAX_PATH);
     if (LoadLibrary(lpPathStringW) == NULL) {
-        return ThrowException(
-            Exception::Error(String::New("Failed to load library: python27.dll.")));
+        args.GetReturnValue().Set(args.GetIsolate()->ThrowException(
+            Exception::Error(String::NewFromUtf8(args.GetIsolate(), "Failed to load library: python27.dll."))));
+        return;
     }
 
     sprintf(lpPathStringA, "%s\\pywintypes27.dll", *pythonHome);
     MultiByteToWideChar(CP_UTF8, 0,lpPathStringA, -1, lpPathStringW, MAX_PATH);
     if (LoadLibrary(lpPathStringW) == NULL) {
-        return ThrowException(
-            Exception::Error(String::New("Failed to load library: pywintypes27.dll.")));
+        args.GetReturnValue().Set(args.GetIsolate()->ThrowException(
+            Exception::Error(String::NewFromUtf8(args.GetIsolate(), "Failed to load library: pywintypes27.dll."))));
+        return;
     }
 
     sprintf(lpPathStringA, "%s\\pythoncomloader27.dll", *pythonHome);
     MultiByteToWideChar(CP_UTF8, 0, lpPathStringA, -1, lpPathStringW, MAX_PATH);
     if (LoadLibrary(lpPathStringW) == NULL) {
-        return ThrowException(
-            Exception::Error(String::New("Failed to load library: pythoncomloader27.dll.")));
+        args.GetReturnValue().Set(args.GetIsolate()->ThrowException(
+            Exception::Error(String::NewFromUtf8(args.GetIsolate(), "Failed to load library: pythoncomloader27.dll."))));
+        return;
     }
 
     sprintf(lpPathStringA, "%s\\pythoncom27.dll", *pythonHome);
     MultiByteToWideChar(CP_UTF8, 0, lpPathStringA, -1, lpPathStringW, MAX_PATH);
     if (LoadLibrary(lpPathStringW) == NULL) {
-        return ThrowException(
-            Exception::Error(String::New("FFailed to load library: pythoncom27.dll.")));
+        args.GetReturnValue().Set(args.GetIsolate()->ThrowException(
+            Exception::Error(String::NewFromUtf8(args.GetIsolate(), "Failed to load library: pythoncom27.dll."))));
+        return;
     }
 #elif __APPLE__
     setenv("PYTHONHOME", *pythonHome, 1);
 #endif
 
-    return Undefined();
+    args.GetReturnValue().Set(Undefined(args.GetIsolate()));
 }
 
 void init(Handle<Object> exports)
 {
-    HandleScope scope;
+    HandleScope scope(Isolate::GetCurrent());
 
     // module.exports.load
-    exports->Set(String::NewSymbol("load"),
-        FunctionTemplate::New(load)->GetFunction());
+    exports->Set(String::NewFromUtf8(Isolate::GetCurrent(), "load", String::kInternalizedString),
+        FunctionTemplate::New(Isolate::GetCurrent(), load)->GetFunction());
 }
 
 NODE_MODULE(binding, init)
