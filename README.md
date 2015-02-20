@@ -1,15 +1,19 @@
 # python-loader binding
 
-load python runtime from specified path.
+Load Python runtime from specified path.
 
 
 ## Usage
 
 ```javascript
 
-// for Windows
 var path = require('path');
-var pythonHome = path.join(path.dirname(process.execPath), 'Python27');
+var pythonHome;
+if (process.platform === 'win32') {
+	pythonHome = path.join(path.dirname(process.execPath), 'Python27');
+} else if (process.platform === 'darwin') {
+	pythonHome = '/System/Library/Frameworks/Python.framework/Versions/Current';
+}
 var pythonLoader = require('python-loader');
 pythonLoader.load(pythonHome);
 
