@@ -14,25 +14,20 @@
     "python",
     "loader"
   ],
-  "author": {
-    "name": "monkeycz",
-    "email": "monkeycz@hotmail.com",
-    "url": "https://github.com/monkeycz"
-  },
-  "contributors": [
-  ],
+  "author": "monkeycz <monkeycz@hotmail.com> (https://github.com/monkeycz)",
+  "contributors": [],
   "scripts": {
     "test": "node test/test.js",
     "install": "node-gyp rebuild"
   },
   "license": "BSD",
   "gypfile": true,
-  "readmeFilename": "README.md",
   "dependencies": {
     "bindings": "~1.1.1"
   },
-  "readme": "# python-loader binding\n\nload python runtime from specified path.\n\n\n## Usage\n\n```javascript\n\n// for Windows\nvar path = require('path');\nvar pythonHome = path.join(path.dirname(process.execPath), 'Python27');\nvar pythonLoader = require('python-loader');\npythonLoader.load(pythonHome);\n\n```\n\n\n",
   "homepage": "https://github.com/monkeycz/python-loader",
-  "_id": "python-loader@0.1.0",
-  "_from": "python-loader@"
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {}
 }
